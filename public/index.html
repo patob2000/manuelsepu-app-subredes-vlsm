@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClassVirtual · VLSM Lab</title>
+<style>
+:root{
+  --navy:#08294b;--navy2:#061d35;--blue:#157df0;--cyan:#11a7f2;
+  --green:#20c878;--green2:#128f55;--red:#ef4444;--orange:#f59e0b;
+  --bg:#f4f8fd;--card:#fff;--line:#dce7f1;--ink:#10213c;--muted:#64748b;
+  --shadow:0 12px 30px rgba(25,55,90,.06)
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(180deg,#f9fcff,#eef5fb);color:var(--ink)}
+button,input,select{font:inherit}
+header{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:26px}.brand img{height:34px;max-width:190px;object-fit:contain}
+.topnav{display:flex;gap:8px}.topnav button{border:0;background:transparent;color:#50657e;padding:9px 11px;border-radius:10px;cursor:pointer}.topnav button.active{background:#edf5ff;color:var(--blue);font-weight:800}
+.user{display:flex;align-items:center;gap:10px}.avatar{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:900}
+.shell{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 68px)}
+.sidebar{background:linear-gradient(180deg,var(--navy),var(--navy2));color:#fff;padding:22px 14px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}
+.labtitle{font-size:23px;font-weight:900;margin:2px 8px}.labtag{font-size:13px;color:#c8d8e9;margin:5px 8px 20px}
+.level{display:flex;gap:11px;padding:12px 10px;border-radius:14px;margin:5px 0;cursor:pointer;transition:.15s}.level:hover{background:#10395f}.level.active{background:linear-gradient(135deg,#154d88,#1d69bd)}
+.level.locked{opacity:.48;cursor:not-allowed}.lbadge{width:36px;height:36px;border-radius:50%;background:#284966;display:grid;place-items:center;font-weight:900;flex:none}.level.done .lbadge{background:var(--green)}.level.active .lbadge{background:#46a4ff}
+.lname{font-weight:850}.ldesc{font-size:12px;color:#ccdae8;margin-top:2px}.miniBar{height:5px;background:#284965;border-radius:99px;margin-top:7px;overflow:hidden}.miniBar span{display:block;height:100%;background:#43a5ff}.level.done .miniBar span{background:var(--green)}
+.sidequote{margin:30px 10px 0;font-size:12px;color:#d7e2ed;font-style:italic;line-height:1.5}
+main{padding:22px;max-width:1500px;width:100%;margin:auto}
+.view{display:none}.view.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow)}
+.hero{display:grid;grid-template-columns:1fr 310px;gap:18px;align-items:center;margin-bottom:18px}.crumb{font-size:13px;color:#3872b3;font-weight:800;margin-bottom:6px}.hero h1{font-size:29px;margin:0 0 7px}.hero p{margin:0;color:#4f627b;line-height:1.45}.progressCard{padding:14px 16px}.phead{display:flex;justify-content:space-between;font-size:13px;font-weight:850}.bar{height:8px;background:#e5edf5;border-radius:99px;overflow:hidden;margin:10px 0 4px}.bar span{display:block;height:100%;background:linear-gradient(90deg,var(--green),#54d998)}
+.dashboard{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.dashmain,.dashside{padding:18px}.levelCards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.levelCard{border:1px solid var(--line);border-radius:14px;padding:15px;cursor:pointer;transition:.15s}.levelCard:hover{transform:translateY(-1px);box-shadow:0 7px 20px rgba(20,50,80,.06)}.levelCard h3{margin:5px 0}.chip{display:inline-block;background:#eef5ff;color:var(--blue);font-size:11px;font-weight:900;padding:5px 8px;border-radius:99px}.skillRow{margin:11px 0}.skillLine{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}.skillBar{height:7px;background:#edf2f7;border-radius:99px;overflow:hidden}.skillBar span{display:block;height:100%;background:#2b8cf4}
+.exerciseLayout{display:grid;grid-template-columns:minmax(600px,1.4fr) 330px;gap:16px}.exerciseCard{padding:18px}.sideCard{padding:17px}.exerciseTop{display:flex;justify-content:space-between;gap:12px}.exerciseTop h2{margin:3px 0 5px}.kicker{font-size:12px;font-weight:900;color:var(--blue);letter-spacing:.08em}.muted{color:var(--muted)}
+.question{margin-top:15px;padding:15px;background:#f8fbff;border:1px solid #e1ecf6;border-radius:13px}.question b{display:block;margin-bottom:6px}
+.choiceGrid{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.choice{border:1px solid #d8e3ee;background:#fff;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer}.choice.selected{background:var(--blue);border-color:var(--blue);color:#fff}
+.answerInput{margin-top:12px;width:100%;padding:12px;border:1px solid #d6e2ed;border-radius:10px}
+.actionRow{display:flex;gap:9px;margin-top:14px}.btn{border:0;border-radius:11px;padding:11px 16px;font-weight:850;cursor:pointer}.primary{background:linear-gradient(#218bf7,#0f70de);color:#fff}.secondary{background:#edf3f8;color:#263c56}.success{background:var(--green);color:#fff}.danger{background:#fff1f2;color:#a11b2d}
+.feedback{display:none;margin-top:12px;padding:12px;border-radius:11px;font-size:13px;line-height:1.45}.feedback.show{display:block}.feedback.good{background:#ecfdf3;border:1px solid #bbf7d0;color:#166534}.feedback.bad{background:#fff1f2;border:1px solid #fecdd3;color:#991b1b}.feedback.hint{background:#fff7ed;border:1px solid #fed7aa;color:#92400e}
+.visualBox{background:#f8fbff;border:1px solid #dde9f4;border-radius:13px;padding:12px}.visualBar{height:58px;border-radius:10px;overflow:hidden;display:flex;background:#edf3f9;margin:9px 0}.visualBar span{display:grid;place-items:center;font-size:11px;font-weight:900;min-width:0}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.metric{border:1px solid #e2e9f1;border-radius:10px;padding:8px;text-align:center}.metric small{color:var(--muted)}.metric b{display:block;font-size:17px}
+.bits{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0c1b34;color:#d8e7fa;padding:12px;border-radius:12px;margin-top:10px;overflow:auto}.netbit{color:#8cc7ff}.hostbit{color:#8df0b5}
+.navrow{display:flex;justify-content:space-between;align-items:center;margin-top:16px}.steps{display:flex;gap:7px;flex-wrap:wrap}.step{width:34px;height:34px;border:1px solid #dbe5ef;background:#fff;border-radius:9px;font-weight:850;cursor:pointer}.step.active{background:var(--blue);color:#fff}.step.done{background:#ecfdf3;color:#167343;border-color:#bdeccd}
+.topologyWrap{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.topologyCard{padding:17px}.diagram{height:445px;position:relative;background:radial-gradient(circle at 50% 25%,#fff 0,#f9fcff 48%,#eef6fc 100%);border:1px solid #e0ebf5;border-radius:15px;margin-top:11px}.device{position:absolute;text-align:center;z-index:3}.router{width:58px;height:38px;border-radius:50%;background:linear-gradient(#20a5ea,#096fae);color:#fff;display:grid;place-items:center;font-weight:900}.switch{width:64px;height:29px;border-radius:6px;background:linear-gradient(#6d899f,#304d65);position:relative}.switch:after{content:"";position:absolute;left:8px;right:8px;bottom:7px;height:4px;background:repeating-linear-gradient(90deg,#fff 0 6px,transparent 6px 10px)}
+.r1{left:29%;top:9%}.r2{right:29%;top:9%}.s1{left:28.5%;top:43%}.s2{right:28.5%;top:43%}
+.dline{position:absolute;height:2px;background:#273d53;transform-origin:left center;z-index:1}.wanline{left:37%;top:13%;width:27%;height:3px;background:#f04444}.v1{left:32.8%;top:18%;height:25%;width:2px}.v2{right:32.5%;top:18%;height:25%;width:2px}.la{left:32%;top:49%;width:26%;transform:rotate(132deg);background:#1684f3}.lb{left:32%;top:49%;width:23%;transform:rotate(58deg);background:#28bd72}.lc{left:68%;top:49%;width:23%;transform:rotate(122deg);background:#e3ac20}.ld{left:68%;top:49%;width:26%;transform:rotate(48deg);background:#7754e8}
+.wan{position:absolute;left:50%;top:7%;transform:translateX(-50%);border:1px solid #ff9a9a;background:#fff7f7;border-radius:10px;padding:7px 18px;text-align:center;color:#a91d1d;font-weight:900;z-index:4;cursor:pointer}.lan{position:absolute;width:118px;height:116px;border:1.5px solid;border-radius:13px;text-align:center;padding:8px 4px;bottom:2%;cursor:pointer;z-index:4;background:#fff}.lan.sel{box-shadow:0 0 0 4px #d9ebff}.lan.complete{opacity:.75}.A{left:4%;border-color:#5caaf5;background:#f4f9ff}.B{left:29%;border-color:#7edca5;background:#f4fff7}.C{right:29%;border-color:#efc85a;background:#fffaf0}.D{right:4%;border-color:#b79cf4;background:#faf7ff}.lan .icon{font-size:25px}.lan b{display:block;margin-top:4px}.lan small{color:var(--muted)}
+.formCard{padding:17px}.selectedNet{display:flex;gap:12px;align-items:center;margin:10px 0 13px}.selectedIcon{font-size:32px}.notice{background:#edf6ff;color:#1768c1;padding:11px;border-radius:10px;font-size:13px}.field{display:grid;grid-template-columns:1fr 1.2fr;gap:8px;align-items:center;margin:8px 0;font-size:13px;font-weight:700}.field input,.field select{padding:9px;border:1px solid #d5e2ee;border-radius:9px;width:100%;background:#fff}.labSteps{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:10px 0 14px}.labStep{display:flex;align-items:center;gap:5px;padding:6px 8px;border-radius:999px;background:#edf2f7;color:#64748b;font-size:11px;font-weight:850}.labStep.active{background:#e8f3ff;color:#087cf0;box-shadow:inset 0 0 0 1px #9dcbff}.labStep.done{background:#ecfdf3;color:#16834c}.labStepDot{width:17px;height:17px;border-radius:50%;background:#cbd7e2;display:grid;place-items:center;color:white;font-size:9px}.labStep.active .labStepDot{background:#1688f8}.labStep.done .labStepDot{background:#20c878}.completion{padding:20px;text-align:center}.completionIcon{width:66px;height:66px;border-radius:50%;background:#eafaf1;color:#169355;display:grid;place-items:center;margin:0 auto 10px;font-size:32px;font-weight:900}.summaryTable{width:100%;border-collapse:collapse;margin-top:15px;font-size:13px}.summaryTable th,.summaryTable td{padding:9px;border-bottom:1px solid #e4ebf2;text-align:left}.summaryTable th{color:#5e7088}.autoNext{margin-top:8px;font-size:12px;color:#52708e}
+.statusList{margin-top:14px}.statusRow{display:grid;grid-template-columns:18px 1fr auto;gap:7px;align-items:center;font-size:12px;margin:7px 0}.sdot{width:16px;height:16px;border-radius:50%;background:#c9d6e2;display:grid;place-items:center;color:#fff;font-size:9px}.sdot.done{background:var(--green)}.state{color:#6c7f95}.state.on{color:var(--blue);font-weight:850}
+.labResults{margin-top:16px;padding:18px}.labResultsHead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.labResultsHead h3{margin:0 0 4px}.labTableWrap{overflow-x:auto}.vlsmMap{display:flex;height:64px;margin-top:13px;border:1px solid #d7e3ee;border-radius:12px;overflow:hidden;background:#edf3f8}.vlsmSegment{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:42px;border-right:2px solid #fff;color:#fff;font-size:11px;text-align:center;padding:4px}.vlsmSegment b{font-size:12px}.vlsmSegment.pending{background:#edf3f8;color:#718399}.vlsmSegment.a{background:#1684f3}.vlsmSegment.b{background:#20b96d}.vlsmSegment.c{background:#d9a51d}.vlsmSegment.d{background:#7655df}.vlsmSegment.wanSeg{background:#ef5350}.mapLegend{display:flex;justify-content:space-between;gap:10px;margin-top:6px;color:var(--muted);font-size:11px}
+.resultView{padding:24px}.scoreHero{text-align:center;padding:25px}.scoreNum{font-size:54px;font-weight:950;color:var(--blue)}.skillGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.skillCard{border:1px solid var(--line);border-radius:13px;padding:12px;text-align:center}.skillCard b{font-size:24px;display:block}.recommend{margin-top:14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:13px;padding:13px;color:#92400e}
+.userStatus{font-size:12px;color:var(--muted)}.logoutBtn{border:1px solid var(--line);background:#fff;color:#263c56;border-radius:10px;padding:8px 12px;font-weight:800;cursor:pointer}
+body.locked{overflow:hidden}.authScreen{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;overflow:auto;background:linear-gradient(180deg,var(--navy),var(--navy2))}.authScreen[hidden]{display:none}.authCard{width:min(420px,100%);padding:28px}.authLogo{height:34px;max-width:190px;object-fit:contain;margin-bottom:18px}.authCard h1{font-size:24px;margin:6px 0}.authCard>p{margin:0 0 16px;line-height:1.45}
+#authForm label{display:block;font-size:13px;font-weight:800;color:#40516a;margin:12px 0}#authForm input{display:block;width:100%;margin-top:6px;padding:12px;border:1px solid #d6e2ed;border-radius:10px}#authForm input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px #157df022}#authForm .btn{width:100%;margin-top:6px}#authForm .btn:disabled{opacity:.6;cursor:wait}
+.authChecking{padding:14px;border-radius:11px;background:#edf6ff;color:#1768c1;font-weight:800;text-align:center}.authMessage{display:none;margin-top:12px;padding:11px;border-radius:10px;font-size:13px;line-height:1.4;background:#edf6ff;color:#1768c1}.authMessage.show{display:block}.authMessage.error{background:#fff1f2;color:#991b1b}.authHelp{margin:16px 0 0;font-size:12px;line-height:1.6;color:var(--muted);text-align:center}.authHelp a:not([hidden]){display:block;margin-top:6px;color:var(--blue);font-weight:800;text-decoration:none}
+@media(max-width:1100px){.exerciseLayout,.topologyWrap,.dashboard{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.skillGrid{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.shell{grid-template-columns:1fr}.sidebar{display:none}.topnav{display:none}main{padding:14px}.levelCards{grid-template-columns:1fr}.diagram{height:510px}.lan{width:105px}.A{left:1%}.B{left:26%}.C{right:26%}.D{right:1%}.skillGrid{grid-template-columns:1fr 1fr}.navrow{gap:8px;flex-wrap:wrap}.steps{order:3;width:100%;justify-content:center}.labResults{padding:14px}.labResultsHead{display:block}.vlsmMap{height:72px}.vlsmSegment{font-size:9px;padding:2px}.vlsmSegment b{font-size:10px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><img src="assets/classvirtual-logo.png" alt="ClassVirtual"><div class="topnav"><button class="active" onclick="showView('home')">VLSM Lab</button><button onclick="showView('progress')">Mi progreso</button><button>Recursos</button></div></div>
+  <div class="user"><div class="avatar" id="userAvatar">ES</div><div><b id="userName">Estudiante</b><div class="userStatus" id="userStatus">Sigue aprendiendo</div></div><button class="logoutBtn" id="logoutBtn" type="button">Salir</button></div>
+</header>
+
+<div id="authScreen" class="authScreen">
+  <div class="card authCard">
+    <img class="authLogo" src="assets/classvirtual-logo.png" alt="ClassVirtual">
+    <div class="kicker">VLSM LAB</div>
+    <h1>Ingresa para continuar</h1>
+    <p class="muted">Usa el mismo correo y contraseña que usas en la plataforma.</p>
+    <div id="authChecking" class="authChecking">Validando acceso…</div>
+    <form id="authForm" hidden>
+      <label>Correo electrónico<input id="authEmail" type="email" autocomplete="email" required></label>
+      <label>Contraseña<input id="authPassword" type="password" autocomplete="current-password" required></label>
+      <button class="btn primary" id="authSubmit" type="submit">Ingresar</button>
+    </form>
+    <div id="authMessage" class="authMessage" role="status"></div>
+    <p class="authHelp">¿No tienes cuenta? Créala en la plataforma.<br>¿Olvidaste tu contraseña? Recupérala en la plataforma.<a data-lms-link target="_blank" rel="noopener" hidden>Ir a la plataforma ↗</a></p>
+  </div>
+</div>
+
+<div class="shell">
+<aside class="sidebar">
+  <div class="labtitle">VLSM LAB</div><div class="labtag">Aprende. Practica. Domina.</div>
+  <div id="sidebarLevels"></div>
+  <div class="sidequote">“No memorices una máscara. Aprende a ver el espacio que representa.”</div>
+</aside>
+
+<main>
+  <section id="home" class="view active">
+    <div class="hero">
+      <div><div class="crumb">ClassVirtual · Laboratorio interactivo</div><h1>Entrena VLSM paso a paso</h1><p>Aprende desde los fundamentos hasta diseñar y diagnosticar redes completas. Tus errores se convierten en ejercicios de práctica.</p></div>
+      <div class="card progressCard"><div class="phead"><span>Progreso general</span><span id="globalPct">0%</span></div><div class="bar"><span id="globalBar" style="width:0%"></span></div><small class="muted" id="globalText">0 ejercicios completados</small></div>
+    </div>
+    <div class="dashboard">
+      <div class="card dashmain"><h2 style="margin-top:0">Continúa aprendiendo</h2><div id="levelCards" class="levelCards"></div></div>
+      <div class="card dashside"><h2 style="margin-top:0">Tu dominio</h2><div id="skillSummary"></div><div class="actionRow"><button class="btn primary" onclick="practiceWeakest()">Practicar mis errores</button></div></div>
+    </div>
+  </section>
+
+  <section id="lesson" class="view">
+    <div class="hero">
+      <div><div class="crumb" id="lessonCrumb"></div><h1 id="lessonLevel"></h1><p id="lessonDesc"></p></div>
+      <div class="card progressCard"><div class="phead"><span>Progreso del nivel</span><span id="lessonPct">0%</span></div><div class="bar"><span id="lessonBar" style="width:0%"></span></div><small class="muted" id="lessonCount"></small></div>
+    </div>
+    <div id="lessonContent"></div>
+    <div class="navrow"><button class="btn secondary" onclick="prevExercise()">← Anterior</button><div id="exerciseSteps" class="steps"></div><button class="btn primary" onclick="nextExercise()">Siguiente →</button></div>
+  </section>
+
+  <section id="progress" class="view">
+    <div class="hero"><div><div class="crumb">Mi progreso</div><h1>Tu evolución en VLSM</h1><p>La app identifica qué conceptos dominas y cuáles necesitas reforzar.</p></div></div>
+    <div class="card resultView"><div id="progressSkills" class="skillGrid"></div><div class="recommend" id="progressRecommendation"></div></div>
+  </section>
+</main>
+</div>
+
+<script>
+const levels=[
+ {name:"Fundamentos",desc:"Comprende prefijos, máscaras, bloques, hosts y broadcast.",type:"classic",ex:[
+  {t:"prefix",title:"Prefijo mínimo",q:"Necesitas conectar 50 hosts. ¿Cuál es el prefijo mínimo?",hosts:50,a:26,skill:"Prefijos"},
+  {t:"capacity",title:"Hosts utilizables",q:"¿Cuántos hosts utilizables permite una red /27?",prefix:27,a:30,skill:"Hosts"},
+  {t:"block",title:"Tamaño de bloque",q:"¿Cuál es el tamaño de bloque de una red /28?",prefix:28,a:16,skill:"Bloques"},
+  {t:"broadcast",title:"Broadcast",q:"¿Cuál es el broadcast de 192.168.10.64/27?",network:"192.168.10.64",prefix:27,a:"192.168.10.95",skill:"Broadcast"},
+  {t:"prefix",title:"Reto de fundamentos",q:"Necesitas 29 hosts. ¿Qué prefijo mínimo elegirías?",hosts:29,a:27,skill:"Prefijos"}]},
+ {name:"VLSM en acción",desc:"Ordena necesidades y construye varias subredes dentro de un bloque.",type:"classic",ex:[
+  {t:"prefix",title:"Administración",q:"Administración necesita 60 hosts.",hosts:60,a:26,skill:"Prefijos"},
+  {t:"prefix",title:"Ventas",q:"Ventas necesita 28 hosts.",hosts:28,a:27,skill:"Prefijos"},
+  {t:"network",title:"Siguiente subred",q:"La primera red ocupa 192.168.10.0/26. ¿Dónde comienza la siguiente subred?",a:"192.168.10.64",skill:"Red"},
+  {t:"broadcast",title:"Broadcast de Ventas",q:"Ventas utiliza 192.168.10.64/27. ¿Cuál es su broadcast?",network:"192.168.10.64",prefix:27,a:"192.168.10.95",skill:"Broadcast"},
+  {t:"prefix",title:"Enlace punto a punto",q:"Un enlace necesita 2 hosts utilizables. ¿Qué prefijo mínimo utilizarías?",hosts:2,a:30,skill:"Prefijos"}]},
+ {name:"VLSM avanzado",desc:"Trabaja con redes base variables, límites de bloque y solapamientos.",type:"classic",ex:[
+  {t:"prefix",title:"Producción",q:"Producción necesita 180 hosts. ¿Qué prefijo mínimo corresponde?",hosts:180,a:24,skill:"Prefijos"},
+  {t:"prefix",title:"Administración",q:"Administración necesita 90 hosts.",hosts:90,a:25,skill:"Prefijos"},
+  {t:"overlap",title:"Detecta solapamiento",q:"LAN A = 10.10.0.0/25 y LAN B = 10.10.0.96/26. ¿Se solapan?",a:"si",skill:"Solapamiento"},
+  {t:"broadcast",title:"Broadcast avanzado",q:"¿Cuál es el broadcast de 172.16.8.128/25?",network:"172.16.8.128",prefix:25,a:"172.16.8.255",skill:"Broadcast"},
+  {t:"network",title:"Límite de bloque",q:"¿Es 192.168.1.96 una dirección de red válida para /26? Responde sí o no.",a:"no",skill:"Red"}]},
+ {name:"Laboratorio",desc:"Aplica VLSM a una topología completa.",type:"topology",ex:[{t:"lab",title:"Empresa ClassVirtual"}]},
+ {name:"Troubleshooting",desc:"Diagnostica redes que ya están configuradas y encuentra el error.",type:"classic",ex:[
+  {t:"mc",title:"IP inválida en interfaz",q:"R1 G0/0 tiene 192.168.10.63/26. ¿Qué ocurre?",opts:["Es un host válido","Es el broadcast","Es la red","Falta gateway"],a:"Es el broadcast",skill:"Diagnóstico"},
+  {t:"mc",title:"Dos PCs y una máscara",q:"PC1 = 192.168.10.20/26 y PC2 = 192.168.10.100/24. ¿PC1 considera a PC2 local?",opts:["Sí","No"],a:"No",skill:"Diagnóstico"},
+  {t:"mc",title:"Solapamiento",q:"LAN A = 10.0.0.0/25 y LAN B = 10.0.0.64/26. ¿Cuál es el problema?",opts:["Ninguno","Se solapan","Falta NAT","Máscara demasiado pequeña"],a:"Se solapan",skill:"Solapamiento"},
+  {t:"broadcast",title:"Broadcast incorrecto",q:"Para 192.168.50.32/27, ¿cuál es el broadcast correcto?",network:"192.168.50.32",prefix:27,a:"192.168.50.63",skill:"Broadcast"},
+  {t:"prefix",title:"Capacidad insuficiente",q:"Una LAN necesita 31 hosts. ¿Cuál es el prefijo mínimo?",hosts:31,a:26,skill:"Prefijos"}]},
+ {name:"Reto profesional",desc:"Integra cálculo, diseño y diagnóstico sin ayudas iniciales.",type:"classic",ex:[
+  {t:"prefix",title:"LAN principal",q:"Una LAN requiere 500 hosts. ¿Prefijo mínimo?",hosts:500,a:23,skill:"Prefijos"},
+  {t:"prefix",title:"Sucursal",q:"Una sucursal requiere 120 hosts. ¿Prefijo mínimo?",hosts:120,a:25,skill:"Prefijos"},
+  {t:"overlap",title:"Auditoría",q:"¿Se solapan 172.16.0.0/23 y 172.16.1.0/24?",a:"si",skill:"Solapamiento"},
+  {t:"broadcast",title:"Broadcast /23",q:"¿Cuál es el broadcast de 10.20.32.0/23?",network:"10.20.32.0",prefix:23,a:"10.20.33.255",skill:"Broadcast"},
+  {t:"network",title:"Siguiente bloque",q:"Tras 10.20.32.0/23, ¿cuál es la siguiente red /23?",a:"10.20.34.0",skill:"Red"}]}
+];
+
+const labNets={
+ A:{name:"LAN A",role:"Administración",hosts:120,p:25,net:"192.168.10.0",first:"192.168.10.1",last:"192.168.10.126",bc:"192.168.10.127",skill:"Laboratorio"},
+ B:{name:"LAN B",role:"Ventas",hosts:60,p:26,net:"192.168.10.128",first:"192.168.10.129",last:"192.168.10.190",bc:"192.168.10.191",skill:"Laboratorio"},
+ C:{name:"LAN C",role:"Soporte",hosts:25,p:27,net:"192.168.10.192",first:"192.168.10.193",last:"192.168.10.222",bc:"192.168.10.223",skill:"Laboratorio"},
+ D:{name:"LAN D",role:"Servidores",hosts:14,p:28,net:"192.168.10.224",first:"192.168.10.225",last:"192.168.10.238",bc:"192.168.10.239",skill:"Laboratorio"},
+ WAN:{name:"WAN",role:"R1–R2",hosts:2,p:30,net:"192.168.10.240",first:"192.168.10.241",last:"192.168.10.242",bc:"192.168.10.243",skill:"Laboratorio"}
+};
+
+const SESSION_KEY="vlsmLabSession";
+const emptyState=()=>({level:0,exercise:0,done:{},errors:{},labDone:{}});
+let state=emptyState(),session=null,saveTimer=null;
+let selectedAnswer=null,selectedPrefix=27,labSelected="A";
+const skills=["Prefijos","Hosts","Bloques","Red","Broadcast","Solapamiento","Diagnóstico","Laboratorio"];
+
+function loadStoredSession(){try{return JSON.parse(localStorage.getItem(SESSION_KEY))}catch{return null}}
+function storeSession(value){session=value;try{if(value)localStorage.setItem(SESSION_KEY,JSON.stringify(value));else localStorage.removeItem(SESSION_KEY)}catch{}}
+async function api(path,{method="GET",body,keepalive=false}={}){
+ const headers={"Content-Type":"application/json"};if(session?.token)headers.Authorization=`Bearer ${session.token}`;
+ let res;try{res=await fetch("/api"+path,{method,headers,keepalive,body:body===undefined?undefined:JSON.stringify(body),signal:keepalive?undefined:AbortSignal.timeout(20000)})}catch{throw new Error("No fue posible conectar con el servidor. Comprueba tu conexión e inténtalo nuevamente.")}
+ const text=await res.text();let data=null;if(text)try{data=JSON.parse(text)}catch{}
+ if(!res.ok){const error=new Error(data?.error||"No fue posible completar la solicitud.");error.status=res.status;throw error}
+ return data;
+}
+function setUserStatus(text){document.getElementById("userStatus").textContent=text}
+function save(){clearTimeout(saveTimer);saveTimer=setTimeout(pushProgress,600)}
+function pushProgress(keepalive=false){
+ clearTimeout(saveTimer);saveTimer=null;if(!session)return Promise.resolve();
+ return api("/progress",{method:"PUT",body:{state},keepalive}).then(()=>setUserStatus("Progreso guardado")).catch(error=>{if(error.status===401)expireSession();else setUserStatus("Sin guardar · revisa tu conexión")});
+}
+function flushProgress(){if(saveTimer)pushProgress(true)}
+window.addEventListener("pagehide",flushProgress);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")flushProgress()});
+function initials(name){return String(name||"").trim().split(/\s+/).slice(0,2).map(word=>word[0]).join("").toUpperCase()||"ES"}
+function renderUser(){const user=session?.user||{},name=user.name||user.email?.split("@")[0]||"Estudiante";document.getElementById("userName").textContent=name;document.getElementById("userAvatar").textContent=initials(name);setUserStatus("Sigue aprendiendo")}
+function authMessage(text,isError=false){const el=document.getElementById("authMessage");el.textContent=text;el.className="authMessage"+(text?" show":"")+(isError?" error":"")}
+function showAuthScreen({checking=false,message="",isError=true}={}){
+ document.body.classList.add("locked");document.getElementById("authScreen").hidden=false;
+ document.getElementById("authChecking").hidden=!checking;document.getElementById("authForm").hidden=checking;
+ authMessage(message,isError);if(!checking)document.getElementById("authEmail").focus();
+}
+function hideAuthScreen(){document.getElementById("authScreen").hidden=true;document.body.classList.remove("locked")}
+async function enterSession(value){
+ storeSession(value);
+ const {state:saved}=await api("/progress");
+ state={...emptyState(),...(saved||{})};
+ renderUser();hideAuthScreen();showView("home");
+}
+function expireSession(){storeSession(null);state=emptyState();showView("home");showAuthScreen({message:"Tu sesión venció. Vuelve a ingresar."})}
+function loadPlatformLinks(){api("/config").then(({lmsUrl})=>{if(lmsUrl)document.querySelectorAll("[data-lms-link]").forEach(link=>{link.href=lmsUrl;link.hidden=false})}).catch(()=>{})}
+// El lmsToken manda sobre cualquier sesión guardada: quien abre la tarjeta del LMS entra con esa identidad.
+async function initAuth(){
+ const params=new URLSearchParams(location.search),lmsToken=params.get("lmsToken"),lmsApp=params.get("lmsApp"),stored=loadStoredSession();
+ if(lmsToken){
+  storeSession(null);
+  if(stored?.token)fetch("/api/logout",{method:"POST",headers:{Authorization:`Bearer ${stored.token}`}}).catch(()=>{});
+  params.delete("lmsToken");params.delete("lmsApp");const query=params.toString();
+  history.replaceState(null,"",location.pathname+(query?`?${query}`:"")+location.hash);
+  showAuthScreen({checking:true});
+  try{await enterSession(await api("/sso",{method:"POST",body:{token:lmsToken,lmsApp}}))}catch(error){storeSession(null);showAuthScreen({message:error.message})}
+  return;
+ }
+ if(stored?.token){
+  showAuthScreen({checking:true});storeSession(stored);
+  try{const {user}=await api("/me");await enterSession({token:stored.token,user});return}catch{storeSession(null)}
+ }
+ showAuthScreen();
+}
+document.getElementById("authForm").onsubmit=async event=>{
+ event.preventDefault();const button=document.getElementById("authSubmit"),password=document.getElementById("authPassword");
+ button.disabled=true;authMessage("Ingresando…");
+ try{await enterSession(await api("/login",{method:"POST",body:{email:document.getElementById("authEmail").value,password:password.value}}));password.value=""}
+ catch(error){storeSession(null);authMessage(error.message,true)}
+ finally{button.disabled=false}
+};
+document.getElementById("logoutBtn").onclick=async()=>{
+ if(saveTimer)await pushProgress();
+ try{await api("/logout",{method:"POST"})}catch{}
+ storeSession(null);state=emptyState();showView("home");showAuthScreen();
+};
+function exKey(l,e){return `L${l}E${e}`}
+function levelDone(l){
+ if(levels[l].type==="topology") return Object.keys(labNets).filter(k=>state.labDone[k]).length;
+ return levels[l].ex.filter((_,i)=>state.done[exKey(l,i)]).length;
+}
+function levelTotal(l){return levels[l].type==="topology"?5:levels[l].ex.length}
+function levelPct(l){return Math.round(levelDone(l)/levelTotal(l)*100)}
+function totalDone(){return levels.reduce((s,_,i)=>s+levelDone(i),0)}
+function totalAll(){return levels.reduce((s,_,i)=>s+levelTotal(i),0)}
+function globalPct(){return Math.round(totalDone()/totalAll()*100)}
+function skillPct(skill){
+ let total=0,ok=0;
+ levels.forEach((l,li)=>{if(l.type!=="topology")l.ex.forEach((e,ei)=>{if(e.skill===skill){total++;if(state.done[exKey(li,ei)])ok++}})});
+ if(skill==="Laboratorio"){total=5;ok=Object.values(state.labDone).filter(Boolean).length}
+ return total?Math.round(ok/total*100):0
+}
+function renderSidebar(){
+ const box=document.getElementById("sidebarLevels");box.innerHTML="";
+ levels.forEach((l,i)=>{
+  const pct=levelPct(i),div=document.createElement("div");
+  div.className=`level ${state.level===i?'active':''} ${pct===100?'done':''}`;
+  div.innerHTML=`<div class="lbadge">${pct===100?'✓':i+1}</div><div style="flex:1"><div class="lname">Nivel ${i+1}</div><div class="ldesc">${l.name} · ${pct}%</div><div class="miniBar"><span style="width:${pct}%"></span></div></div>`;
+  div.onclick=()=>openLevel(i);box.appendChild(div);
+ });
+}
+function showView(id){
+ document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.getElementById(id).classList.add("active");
+ if(id==="home")renderHome();if(id==="progress")renderProgress();
+}
+function renderHome(){
+ renderSidebar();document.getElementById("globalPct").textContent=globalPct()+"%";document.getElementById("globalBar").style.width=globalPct()+"%";document.getElementById("globalText").textContent=`${totalDone()} de ${totalAll()} actividades completadas`;
+ const cards=document.getElementById("levelCards");cards.innerHTML="";
+ levels.forEach((l,i)=>{cards.innerHTML+=`<div class="levelCard" onclick="openLevel(${i})"><span class="chip">Nivel ${i+1}</span><h3>${l.name}</h3><p class="muted">${l.desc}</p><div class="bar"><span style="width:${levelPct(i)}%"></span></div><small class="muted">${levelPct(i)}% completado</small></div>`});
+ document.getElementById("skillSummary").innerHTML=skills.slice(0,6).map(s=>`<div class="skillRow"><div class="skillLine"><span>${s}</span><b>${skillPct(s)}%</b></div><div class="skillBar"><span style="width:${skillPct(s)}%"></span></div></div>`).join("");
+}
+function renderProgress(){
+ renderSidebar();document.getElementById("progressSkills").innerHTML=skills.map(s=>`<div class="skillCard"><span class="muted">${s}</span><b>${skillPct(s)}%</b></div>`).join("");
+ const weakest=skills.map(s=>[s,skillPct(s)]).sort((a,b)=>a[1]-b[1])[0];document.getElementById("progressRecommendation").innerHTML=`<b>Recomendación:</b> Tu habilidad con menor dominio es <b>${weakest[0]}</b> (${weakest[1]}%). Usa “Practicar mis errores” para reforzarla.`;
+}
+function openLevel(i){state.level=i;state.exercise=0;save();showView("lesson");renderLesson()}
+function goToTroubleshooting(){
+ state.level=4;
+ state.exercise=0;
+ save();
+ showView("lesson");
+ renderLesson();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function renderLesson(){
+ const nav=document.querySelector("#lesson .navrow");if(nav)nav.style.display="flex";
+ renderSidebar();const l=levels[state.level];document.getElementById("lessonCrumb").textContent=`Nivel ${state.level+1} · ${l.name}`;document.getElementById("lessonLevel").textContent=l.name;document.getElementById("lessonDesc").textContent=l.desc;document.getElementById("lessonPct").textContent=levelPct(state.level)+"%";document.getElementById("lessonBar").style.width=levelPct(state.level)+"%";document.getElementById("lessonCount").textContent=`${levelDone(state.level)} de ${levelTotal(state.level)} completados`;
+ if(l.type==="topology")renderTopology();else renderClassic();
+ renderSteps();
+}
+function renderSteps(){
+ const l=levels[state.level],steps=document.getElementById("exerciseSteps");steps.innerHTML="";
+ const total=levelTotal(state.level);
+ for(let i=0;i<total;i++){const b=document.createElement("button");b.className="step "+(i===state.exercise?"active ":"")+(l.type!=="topology"&&state.done[exKey(state.level,i)]?"done":"");b.textContent=i+1;b.onclick=()=>{state.exercise=i;renderLesson()};steps.appendChild(b)}
+}
+function supportHTML(prefix,hosts){
+ const hb=32-prefix,total=2**hb,usable=total-2;let bits="";
+ for(let i=0;i<32;i++){if(i&&i%8===0)bits+=".";bits+=i<prefix?'<span class="netbit">1</span>':'<span class="hostbit">0</span>'}
+ return `<div class="visualBox"><b>/${prefix} → ${total} direcciones</b><div class="metrics" style="margin-top:10px"><div class="metric"><small>Direcciones</small><b>${total}</b></div><div class="metric"><small>Hosts útiles</small><b>${usable}</b></div><div class="metric"><small>Bits host</small><b>${hb}</b></div></div><div class="bits">${bits}<br><span style="color:#92a5bd">${prefix} bits de red · ${hb} bits de host</span></div>${hosts?`<div class="feedback show ${usable>=hosts?'good':'bad'}">${usable>=hosts?'✓':'✕'} ${usable>=hosts?'Alcanza':'No alcanza'} para ${hosts} hosts.</div>`:''}</div>`;
+}
+function renderClassic(){
+ const e=levels[state.level].ex[state.exercise];selectedAnswer=null;selectedPrefix=e.a&&typeof e.a==="number"?Math.min(30,Math.max(23,e.a+1)):27;
+ let input="";
+ if(e.t==="prefix"){input=`<div class="choiceGrid" id="prefixChoices">${[23,24,25,26,27,28,29,30].map(p=>`<button class="choice" onclick="pickPrefix(${p})">/${p}</button>`).join("")}</div>`}
+ else if(e.t==="overlap"){input=`<div class="choiceGrid"><button class="choice" onclick="pickText('si',this)">Sí</button><button class="choice" onclick="pickText('no',this)">No</button></div>`}
+ else if(e.t==="mc"){input=`<div class="choiceGrid">${e.opts.map(o=>`<button class="choice" onclick='pickText(${JSON.stringify(o)},this)'>${o}</button>`).join("")}</div>`}
+ else input=`<input id="textAnswer" class="answerInput" placeholder="Escribe tu respuesta">`;
+ document.getElementById("lessonContent").innerHTML=`<div class="exerciseLayout"><div class="card exerciseCard"><div class="exerciseTop"><div><div class="kicker">EJERCICIO ${state.exercise+1}</div><h2>${e.title}</h2></div><span class="chip">${e.skill}</span></div><div class="question"><b>${e.q}</b>${input}</div><div class="actionRow"><button class="btn primary" onclick="checkClassic()">Comprobar</button><button class="btn secondary" onclick="showHintClassic()">💡 Pista</button></div><div id="classicFeedback" class="feedback"></div></div><div class="card sideCard"><h3 style="margin-top:0">Apoyo visual</h3><div id="support">${e.t==="prefix"?supportHTML(selectedPrefix,e.hosts):e.prefix?supportHTML(e.prefix):'<div class="visualBox"><b>Piensa antes de calcular</b><p class="muted">Identifica primero el tamaño del bloque, el rango que ocupa y después valida tu respuesta.</p></div>'}</div></div></div>`;
+ if(document.getElementById("textAnswer"))document.getElementById("textAnswer").oninput=e=>selectedAnswer=e.target.value.trim();
+}
+function pickPrefix(p){selectedPrefix=p;selectedAnswer=p;document.querySelectorAll("#prefixChoices .choice").forEach(b=>b.classList.toggle("selected",b.textContent==="/"+p));const e=levels[state.level].ex[state.exercise];document.getElementById("support").innerHTML=supportHTML(p,e.hosts)}
+function pickText(v,el){selectedAnswer=v;el.parentElement.querySelectorAll(".choice").forEach(b=>b.classList.remove("selected"));el.classList.add("selected")}
+function normalize(v){return String(v??"").trim().toLowerCase().replace("í","i")}
+function checkClassic(){
+ const e=levels[state.level].ex[state.exercise],fb=document.getElementById("classicFeedback");let val=selectedAnswer;if((e.t==="capacity"||e.t==="block"||e.t==="broadcast"||e.t==="network")&&document.getElementById("textAnswer"))val=document.getElementById("textAnswer").value.trim();
+ const ok=normalize(val)===normalize(e.a);fb.className="feedback show "+(ok?"good":"bad");
+ if(ok){state.done[exKey(state.level,state.exercise)]=true;save();fb.innerHTML=`<b>✓ Correcto.</b> ${explainCorrect(e)}`;}
+ else{state.errors[e.skill]=(state.errors[e.skill]||0)+1;save();fb.innerHTML=`<b>Revisa tu respuesta.</b> ${explainError(e,val)}`;}
+ renderSidebar();document.getElementById("lessonPct").textContent=levelPct(state.level)+"%";document.getElementById("lessonBar").style.width=levelPct(state.level)+"%";renderSteps()
+}
+function explainCorrect(e){
+ if(e.t==="prefix")return `El prefijo /${e.a} es el bloque mínimo que satisface el requerimiento.`;
+ if(e.t==="broadcast")return `Identificaste correctamente la última dirección del bloque.`;
+ if(e.t==="overlap")return `Comparaste correctamente los rangos de ambas subredes.`;
+ return "El cálculo es correcto.";
+}
+function explainError(e,val){
+ if(e.t==="prefix"){const p=Number(val||selectedPrefix),u=(2**(32-p))-2;if(u<e.hosts)return `/${p} permite ${u} hosts utilizables y necesitas ${e.hosts}. Busca un bloque mayor.`;return `/${p} alcanza, pero no es el bloque mínimo. En VLSM buscamos reducir desperdicio.`}
+ if(e.t==="broadcast")return `Calcula el tamaño del bloque de /${e.prefix}. El broadcast es la última dirección de ese bloque.`;
+ if(e.t==="overlap")return `Escribe el rango completo de cada subred. Si comparten al menos una dirección, existe solapamiento.`;
+ if(e.t==="network")return `Revisa los límites válidos del bloque. Una dirección dentro de una subred no necesariamente es una dirección de red.`;
+ return `Vuelve a revisar el concepto y usa la pista antes de intentarlo otra vez.`;
+}
+function showHintClassic(){const e=levels[state.level].ex[state.exercise],fb=document.getElementById("classicFeedback");fb.className="feedback show hint";let h="";if(e.t==="prefix")h="Busca la primera potencia de 2 que deje suficientes hosts utilizables.";else if(e.t==="broadcast")h="Broadcast = dirección de red + tamaño del bloque − 1.";else if(e.t==="overlap")h="Calcula dónde termina la primera red antes de evaluar la segunda.";else if(e.t==="capacity")h="Hosts utilizables = 2^h − 2.";else h="Usa el tamaño de bloque para encontrar los límites válidos.";fb.innerHTML="<b>💡 Pista:</b> "+h}
+function renderTopology(){
+ const n=labNets[labSelected];
+ document.getElementById("lessonContent").innerHTML=`<div class="topologyWrap"><div class="card topologyCard"><h2 style="margin:0">Topología de red</h2><p class="muted">Bloque asignado: <b>192.168.10.0/24</b>. Haz clic en una red. El prefijo no se muestra en el diagrama: debes calcularlo.</p><div class="diagram">
+ <div class="wan" id="wanNode" onclick="selectLab('WAN')">WAN<br><small>2 hosts</small></div><div class="device r1"><div class="router">↔</div><b>R1</b><small>Router principal</small></div><div class="device r2"><div class="router">↔</div><b>R2</b><small>Router sucursal</small></div><div class="device s1"><div class="switch"></div><b>SW1</b></div><div class="device s2"><div class="switch"></div><b>SW2</b></div><div class="dline wanline"></div><div class="dline v1"></div><div class="dline v2"></div><div class="dline la"></div><div class="dline lb"></div><div class="dline lc"></div><div class="dline ld"></div>
+ ${["A","B","C","D"].map(id=>{const x=labNets[id];return `<div class="lan ${id} ${id===labSelected?'sel':''} ${state.labDone[id]?'complete':''}" onclick="selectLab('${id}')"><div class="icon">${id==="D"?"▣":"🖥️"}</div><b>${x.name}</b><div>${x.role}</div><small>${x.hosts} hosts</small></div>`}).join("")}</div></div>
+ <div class="card formCard"><div class="kicker">PASO ${["A","B","C","D","WAN"].indexOf(labSelected)+1} DE 5</div><h2 style="margin:4px 0 0">Red seleccionada</h2><div class="labSteps">${["A","B","C","D","WAN"].map((id,i)=>`<div class="labStep ${state.labDone[id]?'done':''} ${id===labSelected?'active':''}"><span class="labStepDot">${state.labDone[id]?'✓':i+1}</span>${id==="WAN"?"WAN":"LAN "+id}</div>`).join("")}</div><div class="selectedNet"><div class="selectedIcon">${labSelected==="WAN"?"↔":labSelected==="D"?"▣":"🖥️"}</div><div><b>${n.name}</b><div>${n.role}</div><small class="muted">${n.hosts} hosts</small></div></div><div class="notice">Completa el direccionamiento. La aplicación validará campo por campo sin mostrar la solución de inmediato.</div>
+ <div class="field"><label>Prefijo</label><select id="labPrefix">${[23,24,25,26,27,28,29,30].map(p=>`<option>/${p}</option>`).join("")}</select></div><div class="field"><label>Dirección de red</label><input id="labNet"></div><div class="field"><label>Primer host</label><input id="labFirst"></div><div class="field"><label>Último host</label><input id="labLast"></div><div class="field"><label>Broadcast</label><input id="labBc"></div><div class="actionRow"><button class="btn primary" id="checkLabBtn" onclick="checkLab()">Comprobar ${n.name} →</button><button class="btn secondary" onclick="hintLab()">💡 Pista</button></div><div id="labFeedback" class="feedback"></div><div class="autoNext">Cuando esté correcta, avanzarás automáticamente a la siguiente red.</div><div class="statusList">${Object.entries(labNets).map(([id,x])=>`<div class="statusRow"><span class="sdot ${state.labDone[id]?'done':''}">${state.labDone[id]?'✓':''}</span><span><b>${x.name}</b> · ${x.hosts} hosts</span><span class="state ${id===labSelected?'on':''}">${state.labDone[id]?'Completada':id===labSelected?'En progreso':'Pendiente'}</span></div>`).join("")}</div></div></div>${labProgressHTML()}`;
+}
+function labProgressHTML(){
+ const order=["A","B","C","D","WAN"];
+ const rows=order.map(id=>{const n=labNets[id],done=state.labDone[id];return `<tr><td><b>${done?'✓ ':''}${n.name}</b></td><td>${n.hosts}</td><td>${done?'/'+n.p:'—'}</td><td>${done?n.net:'—'}</td><td>${done?n.first:'—'}</td><td>${done?n.last:'—'}</td><td>${done?n.bc:'—'}</td></tr>`}).join("");
+ const map=order.map(id=>{const n=labNets[id],done=state.labDone[id],size=2**(32-n.p),colorClass=id==="WAN"?"wanSeg":id.toLowerCase();return `<div class="vlsmSegment ${done?colorClass:'pending'}" style="flex:${size}"><b>${done?n.name:'?'}</b><span>${done?'/'+n.p:'Pendiente'}</span></div>`}).join("");
+ return `<div class="card labResults"><div class="labResultsHead"><div><h3>Tu mapa VLSM</h3><div class="muted">Mira cómo vas ocupando el bloque 192.168.10.0/24.</div></div><span class="chip">${levelDone(3)} de 5 redes</span></div><div class="vlsmMap">${map}</div><div class="mapLegend"><span>192.168.10.0</span><span>192.168.10.255</span></div><div class="labTableWrap"><table class="summaryTable"><thead><tr><th>Red</th><th>Hosts</th><th>Prefijo</th><th>Dirección de red</th><th>Primer host</th><th>Último host</th><th>Broadcast</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+function selectLab(id){labSelected=id;renderTopology()}
+function checkLab(){
+ const n=labNets[labSelected],p=document.getElementById("labPrefix").value,vals={p,net:labNet.value.trim(),first:labFirst.value.trim(),last:labLast.value.trim(),bc:labBc.value.trim()},fb=document.getElementById("labFeedback");
+ const checks={prefix:p==="/"+n.p,network:vals.net===n.net,first:vals.first===n.first,last:vals.last===n.last,bc:vals.bc===n.bc};const ok=Object.values(checks).every(Boolean);fb.className="feedback show "+(ok?"good":"bad");
+ if(ok){
+   state.labDone[labSelected]=true;save();
+   const usable=(2**(32-n.p))-2;
+   fb.innerHTML=`<b>✓ ${n.name} completada.</b> ${n.net}/${n.p} permite ${usable} hosts utilizables: suficiente para los ${n.hosts} requeridos.<br><span class="muted">Avanzando automáticamente…</span>`;
+   document.getElementById("checkLabBtn").disabled=true;
+   document.getElementById("checkLabBtn").textContent="✓ Correcta";
+   renderSidebar();
+   document.getElementById("lessonPct").textContent=levelPct(state.level)+"%";
+   document.getElementById("lessonBar").style.width=levelPct(state.level)+"%";
+   const order=["A","B","C","D","WAN"],idx=order.indexOf(labSelected);
+   setTimeout(()=>{
+     if(idx<order.length-1){labSelected=order[idx+1];state.exercise=idx+1;save();renderLesson();}
+     else{renderLabCompletion();}
+   },1100);
+ }else{
+   state.errors["Laboratorio"]=(state.errors["Laboratorio"]||0)+1;save();
+   const wrong=[];if(!checks.prefix)wrong.push("prefijo");if(!checks.network)wrong.push("dirección de red");if(!checks.first)wrong.push("primer host");if(!checks.last)wrong.push("último host");if(!checks.bc)wrong.push("broadcast");
+   fb.innerHTML=`<b>Hay campos por revisar:</b> ${wrong.join(", ")}. Corrige solo esos elementos y vuelve a comprobar.`;
+ }
+}
+
+function renderLabCompletion(){
+ const rows=Object.entries(labNets).map(([id,n])=>`<tr><td><b>${n.name}</b><br><small class="muted">${n.role}</small></td><td>${n.hosts}</td><td>/${n.p}</td><td>${n.net}</td><td>${n.first} – ${n.last}</td><td>${n.bc}</td></tr>`).join("");
+ document.querySelector("#lesson .navrow").style.display="none";
+ document.getElementById("lessonContent").innerHTML=`<div class="card completion"><div class="completionIcon">✓</div><div class="kicker">NIVEL 4 COMPLETADO</div><h2>Has direccionado correctamente toda la topología</h2><div class="feedback show good" style="margin:12px auto;max-width:620px"><b>Siguiente etapa:</b> Nivel 5 · Troubleshooting. Ahora tendrás que encontrar errores en redes ya configuradas.</div><p class="muted">Partiste desde las redes más grandes y fuiste asignando bloques cada vez menores. Esa es la lógica central de VLSM: adaptar cada subred a su necesidad sin desperdiciar direcciones.</p><table class="summaryTable"><thead><tr><th>Segmento</th><th>Hosts</th><th>Prefijo</th><th>Red</th><th>Rango utilizable</th><th>Broadcast</th></tr></thead><tbody>${rows}</tbody></table><div class="feedback show good" style="text-align:left;margin-top:15px"><b>¿Qué ocurrió con el /24?</b><br>LAN A utilizó un /25, LAN B un /26, LAN C un /27, LAN D un /28 y WAN un /30. Cada decisión se tomó según la cantidad real de hosts, no usando una máscara idéntica para todos los segmentos.</div><div class="actionRow" style="justify-content:center"><button class="btn primary" onclick="goToTroubleshooting()">Ir al Nivel 5 · Troubleshooting →</button><button class="btn secondary" onclick="labSelected='A';renderLesson()">Revisar laboratorio</button></div></div>`;
+ document.getElementById("lessonPct").textContent="100%";document.getElementById("lessonBar").style.width="100%";renderSidebar();
+}
+
+function hintLab(){const n=labNets[labSelected],fb=document.getElementById("labFeedback");fb.className="feedback show hint";fb.innerHTML=`<b>💡 Pista:</b> primero encuentra el prefijo mínimo para ${n.hosts} hosts. Después calcula el tamaño del bloque y sus límites.`}
+function prevExercise(){
+ if(levels[state.level].type==="topology"){
+  const order=["A","B","C","D","WAN"],idx=order.indexOf(labSelected);
+  if(idx>0){labSelected=order[idx-1];state.exercise=idx-1;save();renderLesson();return}
+ }else if(state.exercise>0){state.exercise--;save();renderLesson();return}
+ if(state.level>0){
+  state.level--;
+  if(levels[state.level].type==="topology"){labSelected="WAN";state.exercise=4}else state.exercise=levels[state.level].ex.length-1;
+  save();renderLesson();
+ }
+}
+function nextExercise(){
+ // NIVEL 4: el botón Siguiente jamás debe abrir Mi progreso.
+ if(state.level===3){
+   const order=["A","B","C","D","WAN"];
+   const allDone=order.every(id=>state.labDone[id]===true);
+
+   if(allDone){
+     goToTroubleshooting();
+     return;
+   }
+
+   const currentIndex=Math.max(0,order.indexOf(labSelected));
+   let nextId=order.slice(currentIndex+1).find(id=>!state.labDone[id]);
+   if(!nextId) nextId=order.find(id=>!state.labDone[id]);
+
+   if(nextId){
+     labSelected=nextId;
+     state.exercise=order.indexOf(nextId);
+     save();
+     renderLesson();
+     window.scrollTo({top:0,behavior:"smooth"});
+   }
+   return;
+ }
+
+ // Resto de los niveles.
+ const current=levels[state.level];
+ if(current.type!=="topology" && state.exercise<current.ex.length-1){
+   state.exercise++;
+   save();
+   renderLesson();
+   window.scrollTo({top:0,behavior:"smooth"});
+   return;
+ }
+
+ if(state.level<levels.length-1){
+   openLevel(state.level+1);
+   window.scrollTo({top:0,behavior:"smooth"});
+   return;
+ }
+
+ // Solo el final del Nivel 6 lleva a Mi progreso.
+ showView("progress");
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function practiceWeakest(){
+ const ranked=Object.entries(state.errors).sort((a,b)=>b[1]-a[1]);if(!ranked.length){openLevel(0);return}const target=ranked[0][0];for(let li=0;li<levels.length;li++){if(levels[li].type!=="topology"){const ei=levels[li].ex.findIndex(e=>e.skill===target&&!state.done[exKey(li,levels[li].ex.indexOf(e))]);if(ei>=0){state.level=li;state.exercise=ei;save();showView("lesson");renderLesson();return}}}openLevel(0)
+}
+renderHome();renderSidebar();loadPlatformLinks();initAuth();
+</script>
+</body>
+</html>
